@@ -558,10 +558,13 @@ local function getStrongAxe()
 	return nil
 end
 
-local function pressE()
-	VirtualInputManager:SendKeyEvent(true, Enum.KeyCode.E, false, game)
-	task.wait(0.25)
-	VirtualInputManager:SendKeyEvent(false, Enum.KeyCode.E, false, game)
+local function equipAxe(axe)
+	if not axe then return end
+
+	local rs = game:GetService("ReplicatedStorage")
+	local remote = rs:WaitForChild("RemoteEvents"):WaitForChild("RequestHotbarItem")
+
+	remote:InvokeServer(axe)
 end
 
 local function strong()
@@ -575,9 +578,12 @@ local function strong()
 
 	task.wait(0.15)
 	axe:PivotTo(hrp.CFrame * CFrame.new(0, 3, 0))
-	wait(.15)
+	task.wait(0.15)
+
 	startDrag(axe)
-	pressE()
+
+	-- 🔥 replace E press with remote
+	equipAxe(axe)
 
 	task.wait(3)
 
