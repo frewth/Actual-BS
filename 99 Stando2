@@ -233,12 +233,23 @@ local function bringFoodtoCamp()
 
 			game.ReplicatedStorage.RemoteEvents.RequestStartDraggingItem:FireServer(item)
 
-			local targetCFrame = campfire.PrimaryPart.CFrame * CFrame.new(0, 8, 0)
-			item:PivotTo(targetCFrame)
-			task.wait(.5)
-			item:PivotTo(campfire.PrimaryPart.CFrame * CFrame.new(0, 0, 5))
+			local firstPos = campfire.PrimaryPart.CFrame * CFrame.new(0, 8, 0)
+			item:PivotTo(firstPos)
+
+			task.wait(0.5)
+
+			if string.find(item.Name, "Steak") then
+				local secondPos = campfire.PrimaryPart.CFrame * CFrame.new(3, 0, 10)
+				item:PivotTo(secondPos)
+			end
+			
+			if string.find(item.Name, "Morsel") then
+				local thirdpos = campfire.PrimaryPart.CFrame * CFrame.new(-3, 0, 10)
+				item:PivotTo(thirdpos)
+			end
 
 			game.ReplicatedStorage.RemoteEvents.StopDraggingItem:FireServer(item)
+			task.wait(0.5)
 			item:Destroy()
 		end
 	end
@@ -411,10 +422,10 @@ local function bringItemsByName(searchName)
 	local lootToHandle = {}
 	local search = string.lower(searchName)
 
-	-- MATCH ITEMS (case-insensitive, partial match)
+	-- MATCH ITEMS (case-insensitive, EXACT match only)
 	for _, item in ipairs(workspace.Items:GetChildren()) do
 		if item:IsA("Model") and item.PrimaryPart then
-			if string.find(string.lower(item.Name), search) then
+			if string.lower(item.Name) == search then
 				table.insert(lootToHandle, item)
 			end
 		end
